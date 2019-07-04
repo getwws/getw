@@ -1,0 +1,29 @@
+{
+    "name": "getwws/getw",
+    "description": "simple mvc",
+    "license": "MIT",
+    "authors": [{
+            "name": "GETW",
+            "email": "support@getw.com"
+        }
+    ],
+    "minimum-stability": "dev",
+    "require": {
+        "monolog/monolog": "^1.18.0",        
+        "symfony/var-dumper": "2.8.x-dev",
+        "filp/whoops": "~2.0",
+        "ezyang/htmlpurifier": "dev-master",
+        "vlucas/valitron": "dev-master",
+        "tedivm/stash": "0.14.*",
+        "symfony/translation": "~2.6 || ~3.0"
+    },
+    "autoload": {
+        "files": ["src/functions.php"],
+        "psr-4": {
+            "getw\\": "src"
+        }
+    },
+    "support": {
+        "email": "support@getw.com"
+    }
+}

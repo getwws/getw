@@ -188,20 +188,40 @@ function bootstrap($action = 'action')
 // +----------------------------------------------------------------------
 // | i18N
 // +----------------------------------------------------------------------
+/**
+ * i18n 多语言
+ * @param $message 原文
+ * @param array $args 参数
+ * @param array $options 选项
+ * @return string 翻译后的段落
+ */
 function __($message, $args = [], $options = [])
 {
     return \getw\I18n\Translation::translate($message, $args, $options);
 }
 
+/**
+ * i18n 多语言
+ * @param $message
+ * @param array $args
+ * @param array $options
+ * @return string
+ */
 function t($message, $args = [], $options = [])
 {
     return \getw\I18n\Translation::translate($message, $args, $options);
 }
 
+/**
+ * 加载语言文件
+ * @param $name 语言文件名
+ * @return bool 成功返回true
+ */
 function load_language($name)
 {
     return \getw\I18n\Language::loadLanguage($name);
 }
+
 
 function trans($id, array $parameters = array(), $domain = null, $locale = null)
 {
@@ -213,9 +233,16 @@ function transChoice($id, $number, array $parameters = array(), $domain = null, 
     return \getw\Translator::instance()->transChoice($id, $number, $parameters, $domain, $locale);
 }
 
-//$available_languages = array("en", "zh-cn", "es");
-//
-//$langs = prefered_language($available_languages, $_SERVER["HTTP_ACCEPT_LANGUAGE"]);
+/**
+ * 根据浏览器USER-AGENT 获取最佳语言
+ *
+ * @example $available_languages = array("en", "zh-cn", "es");
+ * @example $langs = prefered_language($available_languages, $_SERVER["HTTP_ACCEPT_LANGUAGE"]);
+ *
+ * @param array $available_languages
+ * @param $http_accept_language
+ * @return mixed
+ */
 function prefered_language(array $available_languages, $http_accept_language)
 {
 
@@ -242,16 +269,35 @@ function prefered_language(array $available_languages, $http_accept_language)
     return $langs;
 }
 
+/**
+ * Response
+ * @param string $content 响应内容
+ * @param int $statusCode HTTP响应码(200、301)
+ * @param array $headers Headers数组
+ * @return \getw\Response 返回Response
+ */
 function response($content = '', $statusCode = 200, $headers = array())
 {
     return new \getw\Response($content, $statusCode, $headers);
 }
 
+/**
+ * Json Response
+ * @param string $content 响应内容
+ * @param int $statusCode HTTP响应码(200、301)
+ * @param array $headers Headers数组
+ * @return \getw\Response 返回Response
+ */
 function response_json($content = '', $statusCode = 200, $headers = array())
 {
     return \getw\Response::toJson($content, $statusCode, $headers);
 }
 
+/**
+ * @param string $url 跳转的URL
+ * @param int $status HTTP响应码
+ * @param array $headers Headers数组
+ */
 function redirect($url = '', $status = 302, $headers = array())
 {
     foreach ($headers as $key => $value) {
@@ -264,6 +310,12 @@ function redirect($url = '', $status = 302, $headers = array())
 // +----------------------------------------------------------------------
 // | XSS
 // +----------------------------------------------------------------------
+/**
+ * 过滤HTML
+ * @param $html HTML内容
+ * @param null $config 为空使用HTMLPurifier默认规则
+ * @return string 返回过滤过的HTML
+ */
 function html_filter($html, $config = null)
 {
     return HTMLPurifier::instance()->purify($html, $config);
@@ -283,6 +335,10 @@ function html_escape($var, $double_encode = TRUE)
     return htmlspecialchars($var, ENT_QUOTES, config_item('charset'), $double_encode);
 }
 
+/**
+ * 判断是否使用SSL
+ * @return bool 使用SSL返回true
+ */
 function is_ssl()
 {
     if (isset($_SERVER['HTTPS'])) {
@@ -299,9 +355,9 @@ function is_ssl()
 }
 
 /**
- *
- * @param  string $connection
- * @return \getw\db\Database
+ * 获取数据库连接
+ * @param  string $connection Name
+ * @return \getw\db\Database 返回数据库
  */
 function db($connection = null)
 {
@@ -330,21 +386,48 @@ function db_schema($connection = null)
     return \getw\DB::connection($connection)->getSchema();
 }
 
+/**
+ * Db Query
+ * @param $statement SQL String
+ * @param array $params Params
+ * @param null|string $connection Connection Name
+ * @return \getw\db\Statement 返回 Statement
+ */
 function db_query($statement, $params = [], $connection = null)
 {
     return \getw\DB::connection($connection)->query($statement, $params);
 }
 
+/**
+ * DB exec
+ * @param $statement
+ * @param null|string $connection
+ * @return int 返回影响行数
+ */
 function db_exec($statement, $connection = null)
 {
     return \getw\DB::connection($connection)->exec($statement);
 }
 
+/**
+ * Db prepare
+ * @param string $statement SQL String
+ * @param array $driver_options
+ * @param null|string $connection
+ * @return \getw\db\Statement 返回Satement
+ */
 function db_prepare($statement, $driver_options = [], $connection = null)
 {
     return \getw\DB::connection($connection)->prepare($statement, $driver_options);
 }
 
+/**
+ * Db fetch Value (获取一个值)
+ * @param $statement SQL String
+ * @param array $params
+ * @param null|string $connection
+ * @return mixed 返回一个值（string、int）
+ */
 function db_fetchValue($statement, $params = [], $connection = null)
 {
     return \getw\DB::connection($connection)->getValue($statement, $params);
@@ -355,30 +438,59 @@ function db_fetchCol($statement, $params = [], $connection = null)
     return \getw\DB::connection($connection)->getCol($statement, $params);
 }
 
+/**
+ * @param $statement
+ * @param array $params
+ * @param null $connection
+ * @return array
+ */
 function db_fetchAll($statement, $params = [], $connection = null)
 {
     $stm = \getw\DB::connection($connection)->query($statement, $params);
     return $stm->fetchAll(\PDO::FETCH_OBJ);
 }
 
+/**
+ * @param $statement
+ * @param array $params
+ * @param null $connection
+ * @return mixed
+ */
 function db_fetch($statement, $params = [], $connection = null)
 {
     $stm = \getw\DB::connection($connection)->query($statement, $params);
     return $stm->fetch(\PDO::FETCH_OBJ);
 }
 
+/**
+ * @param $statement
+ * @param array $params
+ * @param null $connection
+ * @return array
+ */
 function db_fetchPairs($statement, $params = [], $connection = null)
 {
     $stm = \getw\DB::connection($connection)->query($statement, $params);
     return $stm->fetchAll(\PDO::FETCH_KEY_PAIR);
 }
 
+/**
+ * @param $statement
+ * @param array $params
+ * @param null $connection
+ * @return array
+ */
 function db_fetchAssoc($statement, $params = [], $connection = null)
 {
     $stm = \getw\DB::connection($connection)->query($statement, $params);
     return $stm->fetchAll(\PDO::FETCH_KEY_PAIR);
 }
 
+/**
+ * @param $data
+ * @param null $field
+ * @return array
+ */
 function db_prepare_array($data, $field = null)
 {
     if ($field == null) {
@@ -395,21 +507,47 @@ function db_prepare_array($data, $field = null)
     return $bindings;
 }
 
+/**
+ * @param $table
+ * @param $data
+ * @param null $connection
+ * @return string
+ */
 function db_insert($table, $data, $connection = null)
 {
     return \getw\DB::connection($connection)->insert($table, $data);
 }
 
+/**
+ * @param $table
+ * @param $data
+ * @param string $conditions
+ * @param array $params
+ * @param null $connection
+ * @return int
+ */
 function db_update($table, $data, $conditions = '', $params = array(), $connection = null)
 {
     return \getw\DB::connection($connection)->update($table, $data, $conditions, $params);
 }
 
+/**
+ * @param $table
+ * @param string $conditions
+ * @param array $params
+ * @param null $connection
+ * @return int
+ */
 function db_delete($table, $conditions = '', $params = array(), $connection = null)
 {
     return \getw\DB::connection($connection)->delete($table, $conditions, $params);
 }
 
+/**
+ * @param $keys
+ * @param $array
+ * @return array
+ */
 function array_find_keys($keys, &$array)
 {
     $r = [];
@@ -421,6 +559,11 @@ function array_find_keys($keys, &$array)
     return $r;
 }
 
+/**
+ * @param $keys
+ * @param $array
+ * @return mixed
+ */
 function array_unset_keys($keys, &$array)
 {
     foreach ($keys as $key) {
@@ -431,7 +574,13 @@ function array_unset_keys($keys, &$array)
     return $array;
 }
 
-//date
+/**
+ * @param $timestamp
+ * @param string $format
+ * @param null $timezone
+ * @param string $default
+ * @return false|string
+ */
 function format_date($timestamp, $format = '', $timezone = NULL, $default = '')
 {
     if (empty($timestamp)) {
@@ -461,7 +610,10 @@ function format_date($timestamp, $format = '', $timezone = NULL, $default = '')
 }
 
 if (!function_exists('http_response_code')) {
-
+    /**
+     * @param null $code
+     * @return int|mixed|null
+     */
     function http_response_code($code = NULL)
     {
 
@@ -599,32 +751,64 @@ if (!function_exists('http_response_code')) {
 
 }
 
+/**
+ * @param $array
+ * @param $key
+ * @param null $default
+ * @return mixed
+ */
 function array_get($array, $key, $default = null)
 {
     return \getw\Arr::get($array, $key, $default);
 }
 
+/**
+ * @param $array
+ * @param $keys
+ * @return bool
+ */
 function array_has($array, $keys)
 {
     return \getw\Arr::has($array, $keys);
 }
 
+/**
+ * @param $array
+ * @param callable|null $callback
+ * @param null $default
+ * @return mixed
+ */
 function array_last($array, callable $callback = null, $default = null)
 {
     return \getw\Arr::last($array, $callback, $default);
 }
 
+/**
+ * @param $array
+ * @param $key
+ * @param $value
+ * @return array
+ */
 function array_set(&$array, $key, $value)
 {
     return \getw\Arr::set($array, $key, $value);
 }
 
+/**
+ * @param $array
+ * @param callable $callback
+ * @return array
+ */
 function array_where($array, callable $callback)
 {
     return \getw\Arr::where($array, $callback);
 }
 
 if (!function_exists('e')) {
+    /**
+     * @param $value
+     * @return string
+     */
     function e($value)
     {
         return htmlspecialchars($value, ENT_QUOTES, 'UTF-8', false);
@@ -703,16 +887,37 @@ function str_limit($value, $limit = 100, $end = '...')
     return \getw\Str::limit($value, $limit, $end);
 }
 
+/**
+ * 随机生成字符串
+ *
+ * @example <?php echo str_random(5);
+ *
+ * @param int $length 字符长度
+ * @return string 返回生成的字符串
+ */
 function str_random($length = 16)
 {
     return \getw\Str::random($length);
 }
 
+/**
+ * @param $search
+ * @param array $replace
+ * @param $subject
+ * @return string
+ */
 function str_replace_array($search, array $replace, $subject)
 {
     return \getw\Str::replaceArray($search, $replace, $subject);
 }
 
+/**
+ * String Slug (返回固定链接）
+ * 去除非法字符串
+ * @param $title
+ * @param string $separator
+ * @return string
+ */
 function str_slug($title, $separator = '-')
 {
     return \getw\Str::slug($title, $separator);

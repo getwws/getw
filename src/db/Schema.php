@@ -28,11 +28,19 @@ class Schema {
         $this->db = $db;
     }
 
+    /**
+     * @param $table
+     * @return int
+     */
     function tableExists($table) {
         $query = $this->db->query("SHOW TABLES LIKE '{$table}'");
         return $query->rowCount();
     }
 
+    /**
+     * @param $table
+     * @return string
+     */
     public static function parseTableName($table){
         if(is_string($table)){
             $table = explode(',',$table);
@@ -53,6 +61,10 @@ class Schema {
         return join(',',$tables);
     }
 
+    /**
+     * @param $columns
+     * @return string
+     */
     public static function parseColumns($columns){
         if(is_array($columns)){
             return join(',',$columns);
@@ -60,6 +72,9 @@ class Schema {
         return $columns;
     }
 
+    /**
+     * @return string
+     */
     public static function randParamName() {
         return ':' . \getw\Str::xrandom(\getw\Str::ALPHA);
     }

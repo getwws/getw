@@ -40,11 +40,21 @@ class Select
         $this->columns = Schema::parseColumns($columns);
     }
 
+    /**
+     * Select From
+     * @param string $table 表名
+     * @return $this
+     */
     public function from($table){
         $this->table = Schema::parseTableName($table);
         return $this;
     }
 
+    /**
+     * Select
+     * @param string $columns "列名,列名"
+     * @return $this
+     */
     public function select($columns = '*'){
         $this->columns = Schema::parseColumns($columns);
         return $this;
@@ -56,21 +66,37 @@ class Select
         $this->join[] = "$type $table ON $on";
     }
 
+    /**
+     * Left Join
+     * @param string $table Table Name
+     * @param $on On
+     * @return $this
+     */
     public function leftJoin($table, $on)
     {
         $this->__join('LEFT JOIN', $table, $on);
         return $this;
     }
 
+    /**
+     * Right Join
+     * @param string $table Table Name
+     * @param $on On
+     * @return $this
+     */
     public function rightJoin($table, $on)
     {
         $this->__join('RIGHT JOIN', $table, $on);
         return $this;
     }
 
+    /**
+     * Distinct
+     * @return \getw\db\Statement
+     * @throws \Exception
+     */
     public function distinct()
     {
-        //SELECT
         $sql = "SELECT DISTINCT  {$this->columns} FROM {$this->table} ";
         return DB::query($sql);
     }

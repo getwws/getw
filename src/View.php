@@ -16,10 +16,16 @@ namespace getw;
 /**
  * Description of View
  *
- * @author allen <allen@getw.cn>
  */
 class View {
 
+    /**
+     * 渲染模板
+     * @param string $path 模板路径
+     * @param array $_data 参数
+     * @param bool $outputReturn 为true返回模板内容，false输出内容
+     * @return string
+     */
     public static function render($path, $_data = array(), $outputReturn = false) {
         $obLevel = ob_get_level();
         $error_level = error_reporting();

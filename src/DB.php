@@ -25,8 +25,13 @@ class DB
 {
 
     /**
+     * DB::table
+     *
+     * @example
+     * DB::table('name');
+     *
      * @param string $table Table Name
-     * @param string $connection null连接默认链接
+     * @param null|string $connection Connection Name
      * @return QueryBuilder
      */
     public static function table($table, $connection = null)
@@ -34,24 +39,30 @@ class DB
         return new QueryBuilder($table, $connection);
     }
 
+
     /**
+     * DB::query
      *
-     * @param string $statement SQL字符串
-     * @param array $params 参数KEY=>VALUE
-     * @param string $connection
-     * @return \getw\db\Statement
+     * @example
+     * DB::query('select * from table',['key'=>'value']);
+     * @param string $statement SQL String
+     * @param null|array $params 参数
+     * @param null $connection
+     * @return db\Statement
+     * @throws \Exception
      */
     public static function query($statement, $params = null, $connection = null)
     {
         return Connection::getConenction($connection)->query($statement, $params);
     }
 
+
     /**
-     *
-     * @param string $statement
-     * @param array $params
-     * @param string $connection
-     * @return \getw\db\Statement
+     * @param $statement
+     * @param null $params
+     * @param null $connection
+     * @return db\Statement
+     * @throws \Exception
      */
     public static function statement($statement, $params = null, $connection = null)
     {
@@ -59,11 +70,11 @@ class DB
     }
 
     /**
-     *
-     * @param string $statement
-     * @param array $params
-     * @param string $connection
+     * @param $statement
+     * @param null $params
+     * @param null $connection
      * @return \PDOStatement
+     * @throws \Exception
      */
     public static function rawQuery($statement, $params = null, $connection = null)
     {
@@ -71,10 +82,10 @@ class DB
     }
 
     /**
-     *
-     * @param string $statement
-     * @param string $connection
-     * @return boolean
+     * @param $statement
+     * @param null $connection
+     * @return int
+     * @throws \Exception
      */
     public static function exec($statement, $connection = null)
     {
@@ -82,11 +93,11 @@ class DB
     }
 
     /**
-     *
-     * @param string $statement
+     * @param $statement
      * @param array $driver_options
-     * @param string $connection
-     * @return \getw\db\Statement
+     * @param null $connection
+     * @return db\Statement
+     * @throws \Exception
      */
     public static function prepare($statement, $driver_options = [], $connection = null)
     {
@@ -94,10 +105,11 @@ class DB
     }
 
     /**
-     * @param string $table
-     * @param array $data
-     * @param string $connection
-     * @return string
+     * @param $table
+     * @param $data
+     * @param null $connection
+     * @return int|string
+     * @throws \Exception
      */
     public function insert($table, $data, $connection = null)
     {
@@ -110,6 +122,7 @@ class DB
      * @param string $conditions
      * @param array $params
      * @return int
+     * @throws \Exception
      */
     public static function update($table, $data, $conditions = '', $params = array())
     {
@@ -120,8 +133,9 @@ class DB
      * @param $table
      * @param string $conditions
      * @param array $params
-     * @param string $connection
+     * @param null $connection
      * @return int
+     * @throws \Exception
      */
     public static function delete($table, $conditions = '', $params = array(), $connection = null)
     {
@@ -129,47 +143,41 @@ class DB
     }
 
     /**
+     * DB::count
      *
-     * @param string $table
+     * @example
+     * DB::count('table','name=:name',['name'=>'lisa']);
+     * @param string $table Table Name
      * @param string $conditions
      * @param array $params
-     * @param string $connection
-     * @return int
+     * @param null $connection
+     * @return int|mixed
+     * @throws \Exception
      */
     public static function count($table, $conditions = '', $params = [], $connection = null)
     {
         return Connection::getConenction($connection)->count($table, $conditions, $params);
     }
 
-    /**
-     * @param string $connection
-     */
+
     public static function beginTransaction($connection = null)
     {
         Connection::getConenction($connection)->beginTransaction();
     }
 
-    /**
-     * @param string $connection
-     */
+
     public static function commit($connection = null)
     {
         Connection::getConenction($connection)->commit();
     }
 
-    /**
-     * @param string $connection
-     */
+
     public static function rollBack($connection = null)
     {
         Connection::getConenction($connection)->rollBack();
     }
 
-    /**
-     * @param \Closure $callable
-     * @param string $connection
-     * @return bool
-     */
+
     public static function transaction($callable, $connection = null)
     {
         if (is_callable($callable)) {
@@ -188,9 +196,11 @@ class DB
     }
 
     /**
-     * @param string $name
-     * @param string $connection
-     * @return string
+     * 获取LastinsertID
+     * @param null|string $name
+     * @param null|string $connection
+     * @return int
+     * @throws \Exception
      */
     public static function lastInsertId($name = null, $connection = null)
     {
@@ -198,22 +208,20 @@ class DB
     }
 
     /**
-     * @param string $statement
-     * @param array $params
-     * @param string $connection
+     * DB::getRow
+     *
+     * @param string $statement Sql String
+     * @param array $params 参数
+     * @param null|string $connection
      * @return mixed
+     * @throws \Exception
      */
     public static function getRow($statement = null, $params = [], $connection = null)
     {
         return Connection::getConenction($connection)->getRow($statement, $params);
     }
 
-    /**
-     * @param string $statement
-     * @param array $params
-     * @param string $connection
-     * @return mixed
-     */
+
     public static function getValue($statement = null, $params = [], $connection = null)
     {
         return Connection::getConenction($connection)->getValue($statement, $params);
@@ -235,7 +243,12 @@ class DB
     }
 
     /**
-     * @param string|array $columns
+     * DB::select
+     *
+     * @example
+     * DB::select('table','*')->where();
+     * @param string $table Table Name
+     * @param string $columns Columns
      * @return Select
      */
     public static function select($table,$columns = '*'){
@@ -243,9 +256,10 @@ class DB
     }
 
     /**
-     *
-     * @param string $connection
-     * @return \getw\db\Database PDO
+     * PDO
+     * @param null|string $connection 数据库连接名称
+     * @return db\Database|mixed
+     * @throws \Exception
      */
     public static function pdo($connection = null)
     {
@@ -253,9 +267,9 @@ class DB
     }
 
     /**
-     *
-     * @param string $connection
-     * @return \getw\db\Database PDO
+     * @param null|string $connection 数据库连接名称
+     * @return db\Database|mixed
+     * @throws \Exception
      */
     public static function connection($connection = null)
     {
@@ -263,8 +277,10 @@ class DB
     }
 
     /**
-     * @param string $connection
-     * @return mixed
+     * Last Query String
+     * @param null|string $connection 数据库连接名称
+     * @return string
+     * @throws \Exception
      */
     public static function lastQuery($connection = null){
         return Connection::getConenction($connection)->getLastQuery();

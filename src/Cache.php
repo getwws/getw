@@ -35,6 +35,12 @@ class Cache {
         return static::factory($name, Config::get('cache.' . $name));
     }
 
+    /**
+     * Create Cache
+     * @param string $name
+     * @param array $options
+     * @return mixed|Pool
+     */
     public static function factory($name = 'file', $options = []) {
         if (!isset(static::$instances[$name])) {
             if ($name == 'file') {

@@ -890,7 +890,10 @@ function str_limit($value, $limit = 100, $end = '...')
 /**
  * 随机生成字符串
  *
- * @example <?php echo str_random(5);
+ * @example
+ * <code>
+ * echo str_random(5);
+ *</code>
  *
  * @param int $length 字符长度
  * @return string 返回生成的字符串

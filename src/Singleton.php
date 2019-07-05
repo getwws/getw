@@ -22,6 +22,10 @@ trait Singleton
 
     protected static $_instance;
 
+    /**
+     * Instance
+     * @return mixed
+     */
     final public static function instance()
     {
         if (is_null(static::$_instance)) {

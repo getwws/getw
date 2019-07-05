@@ -110,13 +110,20 @@ class Session
         }
     }
 
-
+    /**
+     * 判断是否有错误
+     * @return bool
+     */
     public function hasErrors()
     {
         return empty($_SESSION['flash_messages'][self::ERROR]) ? false : true;
     }
 
-
+    /**
+     * 判断是否有此类型的Flash
+     * @param null $type
+     * @return bool
+     */
     public function hasFlash($type = null)
     {
         if (!is_null($type)) {
@@ -131,7 +138,12 @@ class Session
         return false;
     }
 
-
+    /**
+     * Session getFlash
+     * 根据类型获取Flash
+     * @param null $type
+     * @return array|mixed
+     */
     public function getFlash($type = null)
     {
         $flash = [];
@@ -146,6 +158,11 @@ class Session
     }
 
 
+    /**
+     * 清除Flash
+     * @param array $types
+     * @return $this
+     */
     public function clearFlash($types = [])
     {
         if ((is_array($types) && empty($types)) || is_null($types) || !$types) {

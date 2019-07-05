@@ -25,6 +25,11 @@ class Expr {
         $this->raw = $value;
     }
 
+    /**
+     * Make Expr
+     * @param mixed $value
+     * @return Expr
+     */
     public static function make($value) {
         return new static($value);
     }

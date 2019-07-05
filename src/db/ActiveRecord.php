@@ -31,6 +31,10 @@ abstract class ActiveRecord
         return static::db()->query($sql, $params);
     }
 
+    /**Find by id
+     * @param array $params
+     * @return mixed
+     */
     public static function findById($params = [])
     {
         if(!is_array($params)){

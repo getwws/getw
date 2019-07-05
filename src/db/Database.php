@@ -47,13 +47,18 @@ class Database extends PDO {
         return false;
     }
 
+    /**
+     * DB Exec
+     * @param string $statement
+     * @return int
+     */
     public function exec($statement) {
         $this->lastQueryString = $statement;
         return parent::exec($this->prepareSQL($statement));
     }
 
     /**
-     * 
+     * Db Statement
      * @param string $statement
      * @param array $params
      * @return \getw\db\Statement
@@ -68,9 +73,9 @@ class Database extends PDO {
     }
 
     /**
-     * 
-     * @param array $statement
-     * @param array $driver_options
+     * DB prepare
+     * @param string $statement SQL String
+     * @param array $driver_options PDO driver_options
      * @return Statement
      */
     public function prepare($statement, $driver_options = []) {
@@ -78,8 +83,8 @@ class Database extends PDO {
     }
 
     /**
-     * 
-     * @param string $statement
+     * Db raw_query
+     * @param string $statement SQL String
      * @param array $params
      * @return \PDOStatement
      */
@@ -92,38 +97,85 @@ class Database extends PDO {
         return FALSE;
     }
 
+    /**
+     * DB fetchAll
+     * @param $statement SQL String
+     * @param null|array $params
+     * @return array
+     */
     public function fetchAll($statement, $params = null) {
         $stm = $this->query($statement, $params);
         return $stm->fetchAll(PDO::FETCH_OBJ);
     }
 
+    /**
+     * Db getRow
+     * return Object
+     * @param string $statement SQL String
+     * @param null $params
+     * @return mixed 返回Object
+     */
     public function getRow($statement, $params = null) {
         $stm = $this->query($statement, $params);
         return $stm->fetchObject();
     }
 
+    /**
+     * Db getValue
+     * @param $statement
+     * @param array $params
+     * @return mixed
+     */
     public function getValue($statement, $params = array()) {
         return $this->query($statement, $params)->fetchColumn(0);
     }
 
+    /**
+     * Db getCol
+     * @param string $statement SQL String
+     * @param array $params
+     * @return array
+     */
     public function getCol($statement, $params = array()) {
         $stm = $this->prepare($statement);
         $stm->execute($params);
         return $stm->fetchAll(\PDO::FETCH_COLUMN, 0);
     }
 
+    /**
+     * Db rename Table
+     * @param string $oldName 旧表名
+     * @param string $newName 新表名
+     * @return int
+     */
     public function renameTable($oldName, $newName) {
         return $this->exec('RENAME TABLE ' . $this->quoteTable($oldName) . ' TO ' . $this->quoteTable($newName));
     }
 
+    /**
+     * Db dropTable
+     * @param string $table 表名
+     * @return int
+     */
     public function dropTable($table) {
         return $this->exec('DROP TABLE ' . $this->quoteTable($table));
     }
 
+    /**
+     * Db truncate table
+     * @param string $table 表名
+     * @return int
+     */
     public function truncateTable($table) {
         return $this->exec('TRUNCATE TABLE ' . $this->quoteTable($table));
     }
 
+    /**
+     * Db insert
+     * @param string $table 表名
+     * @param array $data 插入的数据
+     * @return int Return Last id
+     */
     public function insert($table, $data) {
         $params = array();
         $names = array();
@@ -147,6 +199,14 @@ class Database extends PDO {
         return $this->lastInsertId();
     }
 
+    /**
+     * Db update
+     * @param string $table 表名
+     * @param $data 修改的数据
+     * @param string $conditions 条件
+     * @param array $params 参数
+     * @return int
+     */
     public function update($table, $data, $conditions = '', $params = array()) {
         $placeholders = array();
         $input_params = array();
@@ -169,6 +229,13 @@ class Database extends PDO {
         return $statement->rowCount();
     }
 
+    /**
+     * db delete
+     * @param string $table 表名
+     * @param string $conditions 条件
+     * @param array $params 参数
+     * @return int
+     */
     public function delete($table, $conditions = '', $params = array()) {
         $sql = 'DELETE FROM ' . $this->quoteTable($table);
         $input_params = array();
@@ -181,6 +248,13 @@ class Database extends PDO {
         return $statement->rowCount();
     }
 
+    /**
+     * db count
+     * @param string $table 表名
+     * @param string $conditions 条件
+     * @param array $params 参数
+     * @return mixed|int 返回行数
+     */
     public function count($table, $conditions = '', $params = array()) {
         $sql = 'SELECT COUNT(*) as rowcount FROM ' . $this->quoteTable($table);
         $input_params = array();
@@ -193,6 +267,15 @@ class Database extends PDO {
         return $statement->fetchColumn(0);
     }
 
+    /**
+     * Db getAssoc
+     * 获取两列，第一列为key，第二列为value
+     * @param string $table 表名
+     * @param string|array $columns 列明
+     * @param string $conditions 条件
+     * @param array $params 参数
+     * @return array
+     */
     public function getAssoc($table, $columns, $conditions = '', $params = array()) {
         if (is_array($columns)) {
             $columns = join(',', array_map(function($value) {
@@ -215,18 +298,40 @@ class Database extends PDO {
         return $keypairs;
     }
 
+    /**
+     * 创建Query查询
+     * @param null|string $connection 链接名称
+     * @return QueryBuilder
+     */
     public function createQuery($connection = null) {
         return new QueryBuilder(NULL, $connection);
     }
 
+    /**
+     * 执行QueryBuilder
+     * @see QueryBuilder
+     * @param QueryBuilder $query
+     * @return Statement
+     */
     public function executeQuery(QueryBuilder $query) {
         return $this->query($query->getQuery(), $query->getParams());
     }
 
+    /**
+     * Db Schema
+     * @return Schema
+     */
     function getSchema() {
         return new Schema($this);
     }
 
+    /**
+     * 预处理条件
+     * @param string|array $conditions
+     * @param array $params
+     * @param $input_params
+     * @return string
+     */
     private function prepareConditions($conditions, $params = array(), &$input_params) {
         if (is_array($conditions)) {
             $lines = array();
@@ -273,6 +378,11 @@ class Database extends PDO {
         );
     }
 
+    /**
+     * quote table
+     * @param string $table
+     * @return string
+     */
     public function quoteTable($table) {
         $table = $this->tablePrefix . $table;
         switch ($this->driver) {
@@ -288,6 +398,11 @@ class Database extends PDO {
         }
     }
 
+    /**
+     * quote column
+     * @param string $columnName
+     * @return string
+     */
     public function quoteColumn($columnName) {
         $colAlias = explode('.', $columnName);
         if (is_array($colAlias) && count($colAlias) == 2) {
@@ -336,6 +451,10 @@ class Database extends PDO {
         return $output;
     }
 
+    /**
+     * Rand param name
+     * @return string
+     */
     public function randParamName() {
         return ':' . \getw\Str::xrandom(\getw\Str::ALPHA);
     }

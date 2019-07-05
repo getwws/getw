@@ -29,14 +29,32 @@ class Input {
         return static::server('REMOTE_ADDR', $default);
     }
 
+    /**
+     * Input Get
+     * @param string $name
+     * @param null|mixed $default
+     * @return mixed
+     */
     public static function get($name, $default = null) {
         return Arr::get($_GET, $name, $default);
     }
 
+    /**
+     * Input Post
+     * @param string $name
+     * @param null|mixed $default
+     * @return mixed
+     */
     public static function post($name, $default = null) {
         return Arr::get($_POST, $name, $default);
     }
 
+    /**
+     * Input All
+     * @param string $name
+     * @param null|mixed $default
+     * @return mixed
+     */
     public static function all($name = null, $default = null) {
         if ($name == null && $default == null) {
             return $_REQUEST;
@@ -181,14 +199,28 @@ class Input {
         return empty($headers) ? $default : ((func_num_args() === 0) ? $headers : Arr::get(array_change_key_case($headers), strtolower($index), $default));
     }
 
+    /**
+     *
+     * @param string $default
+     * @return array|string
+     */
     public static function query_string($default = '') {
         return static::server('QUERY_STRING', $default);
     }
 
+    /**
+     *
+     * @param string $method
+     * @return bool
+     */
     public static function isMethod($method = '') {
         return (static::server('REQUEST_METHOD') == strtolower($method));
     }
 
+    /**
+     * Get Method
+     * @return mixed
+     */
     public static function method() {
         if($_SERVER['REQUEST_METHOD'] == 'POST' && array_key_exists('HTTP_X_HTTP_METHOD', $_SERVER)){
             $HTTP_X_HTTP_METHOD = $_SERVER['HTTP_X_HTTP_METHOD'];

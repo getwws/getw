@@ -39,20 +39,44 @@ class QueryBuilder {
         $this->db = Connection::getConenction($connection);
     }
 
+    /**
+     *
+     * @param string $table
+     * @param null|string $connection Db Name
+     * @return QueryBuilder
+     */
     public static function table($table, $connection = null) {
         return new QueryBuilder($table, $connection);
     }
 
+    /**
+     * Query Count
+     * @example
+     * #统计行数
+     * echo QueryBuilder::table('name')->count();
+     * @param string $column
+     * @return mixed
+     */
     public function count($column = '*') {
         $sql = "SELECT COUNT({$column}) AS rowcount FROM {{$this->table}} " . $this->prepareWhere();
         return $this->db->queryValue($sql);
     }
 
+    /**
+     * Query Delete
+     *
+     * @return bool
+     */
     public function delete() {
         $sql = "DELETE FROM {{$this->table}} " . $this->prepareWhere();
         return $this->db->query($sql);
     }
 
+    /**
+     * Query Update
+     * @param string $data
+     * @return bool|int 返回行数或者false
+     */
     public function update($data) {
         $placeholders = array();
         $input_params = array();
@@ -71,54 +95,123 @@ class QueryBuilder {
         return false;
     }
 
+    /**
+     * @param string $data
+     * @return int
+     */
     public function insert($data) {
         return $this->db->insert($this->table, $data);
     }
 
+    /**
+     * @param $id
+     * @param string $primaryKey
+     * @return mixed
+     */
     public function find($id, $primaryKey = 'id') {
         return $this->db->getRow("SELECT * FROM {$this->table} WHERE {$primaryKey}=:$primaryKey", [$primaryKey => $id]);
     }
 
+    /**
+     * Select
+     *
+     * @param string|array $columns 列名
+     * @return $this
+     */
     public function select($columns) {
         $this->select[] = $columns;
         return $this;
     }
 
+    /**
+     * Query Join
+     *
+     * @param string $table 表名
+     * @param string $on Join ON
+     * @param string $type Join Type(LEFT/RIGHT)
+     * @return $this
+     */
     public function join($table, $on, $type = 'LEFT JOIN') {
         $this->join[] = sprintf("%s %s ON %s", $type, $this->prepareTableName($table), $on);
         return $this;
     }
 
+    /**
+     * Query left join
+     *
+     * @param string $table 表名
+     * @param string $on Join ON
+     * @return $this
+     */
     public function leftJoin($table, $on) {
         $this->join[] = sprintf("LEFT JOIN %s ON %s", $this->prepareTableName($table), $on);
         return $this;
     }
 
+    /**
+     * Query right join
+     * @param string $table 表名
+     * @param string $on Join ON
+     * @return $this
+     */
     public function rightJoin($table, $on) {
         $this->join[] = sprintf("RIGHT JOIN %s ON %s", $this->prepareTableName($table), $on);
         return $this;
     }
 
+    /**
+     * Query inner join
+     * @param string $table Table Name
+     * @param $on Join ON
+     * @return $this
+     */
     public function innerJoin($table, $on) {
         $this->join[] = sprintf("INNER JOIN %s ON %s", $this->prepareTableName($table), $on);
         return $this;
     }
 
+    /**
+     * Query From
+     * @param string $table Table Name
+     * @return $this
+     */
     public function from($table) {
         $this->from[] = $this->prepareTableName($table);
         return $this;
     }
 
+    /**
+     * Group By
+     * @example
+     * DB::table()->groupBy('name');
+     * @param $statement
+     * @return $this
+     */
     public function groupBy($statement) {
         $this->groupBy[] = $statement;
         return $this;
     }
 
+    /**
+     * Order By
+     * @example
+     * DB::table()->orderBy('name asc');
+     * @param string $statement
+     * @return $this
+     */
     public function orderBy($statement) {
         $this->orderBy[] = $statement;
         return $this;
     }
 
+    /**
+     * Query Limit
+     * @example
+     * DB::table()->limit(10,0);
+     * @param string $limit Limit
+     * @param null|int $offset 偏移量
+     * @return $this
+     */
     public function limit($limit, $offset = null) {
         $this->limit = '';
         if (!is_null($offset)) {
@@ -128,6 +221,15 @@ class QueryBuilder {
         return $this;
     }
 
+    /**
+     * Query where
+     * @example
+     * DB::table()->where('name','=','Lisa');
+     * @param string $statement 列名
+     * @param string $operator 操作符(=,>=,<=,!=)
+     * @param array $params
+     * @return $this
+     */
     public function where($statement, $operator = '=', $params = []) {
         $paramName = '';
         if (!is_null($params)) {
@@ -141,6 +243,13 @@ class QueryBuilder {
         return $this;
     }
 
+    /**
+     * Query orWhere
+     * @param string $statement 列名
+     * @param string $operator 操作符(=,>=,<=,!=)
+     * @param array $params
+     * @return $this
+     */
     public function orWhere($statement, $operator = '=', $params = []) {
         $paramName = '';
         if (!is_null($params)) {
@@ -154,6 +263,16 @@ class QueryBuilder {
         return $this;
     }
 
+    /**
+     * Query Condition
+     *
+     * @example
+     * DB::table('test')->select('*')->condition('name=:name',['name'=>'allen'],'AND / OR');
+     * @param $statement
+     * @param array $params
+     * @param string $operator
+     * @return $this
+     */
     public function condition($statement, $params = [], $operator = 'AND') {
         if (!empty($this->where)) {
             $this->where[] = " $operator ";
@@ -163,41 +282,94 @@ class QueryBuilder {
         return $this;
     }
 
+    /**
+     * Query whereIn
+     *
+     * @example
+     * DB::table('test')->select('*')->whereIn('name',['lisa','allen'],'AND / OR');
+     *
+     * @param string $column 列名
+     * @param array $params 参数
+     * @param string $condition AND 或者 NO
+     * @return $this
+     */
     public function whereIn($column, $params, $condition = 'AND') {
         $this->prepareWhereIn($column, $params, '%s IN (%s)', $condition);
         return $this;
     }
 
+    /**
+     * Query whereNotIn
+     *
+     * @example
+     * DB::table('test')->select('*')->whereIn('name',['lisa','allen'],'AND / OR');
+     *
+     * @param string $column 列名
+     * @param array $params 参数
+     * @param string $condition AND 或者 NO
+     * @return $this
+     */
     public function whereNotIn($column, $params, $condition = 'AND') {
         $this->prepareWhereIn($column, $params, '%s NOT IN (%s)', $condition);
         return $this;
     }
 
+    /**
+     * Query having
+     * @param string $statement
+     * @param array $params
+     * @return $this
+     */
     public function having($statement, $params = []) {
         $this->having[] = $statement;
         $this->addParams($params);
         return $this;
     }
 
-    //--------------------------------------------------
+    /**
+     * Query execute
+     * @return Statement
+     */
     public function execute() {
         return $this->db->executeQuery($this);
     }
 
+    /**
+     * 获取所有参数
+     * @return array
+     */
     public function getParams() {
         return $this->params;
     }
 
+    /**
+     * Query Bind Value
+     * 设置参数
+     * @param string $name 参数名
+     * @param mixed $value 参数值
+     * @return $this
+     */
     public function bindValue($name, $value) {
         $this->params[$name] = $value;
         return $this;
     }
 
+    /**
+     * Query Bind Values
+     * 绑定数组参数
+     * @param array $params 参数
+     * @return $this
+     */
     public function bindValues($params) {
         $this->addParams($params);
         return $this;
     }
 
+    /**
+     * 添加参数
+     * @param array $params
+     * @return $this
+     */
     public function addParams($params) {
         if (is_null($params)) {
             return;
@@ -210,8 +382,8 @@ class QueryBuilder {
     }
 
     /**
-     * 
-     * @param type $params
+     * Execute Query
+     * @param array $params
      * @return \getw\db\Statement
      */
     public function get($params = []) {
@@ -221,6 +393,9 @@ class QueryBuilder {
         return $this->db->query($this->getQuery(), $params);
     }
 
+    /**
+     * Clean Query
+     */
     public function clean() {
         $this->select = [];
         $this->join = [];

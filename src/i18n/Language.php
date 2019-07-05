@@ -23,6 +23,11 @@ class Language {
     public static $language = 'zh_CN';
     public static $languagePath = [];
 
+    /**
+     *
+     * @param string $key
+     * @param null|mixed $value
+     */
     public static function with($key, $value = null) {
         if (is_array($key)) {
             static::$languages = array_merge(static::$languages, $key);
@@ -31,10 +36,20 @@ class Language {
         }
     }
 
+    /**
+     * Language set
+     * @param string $key
+     * @param mixed $value
+     */
     public static function set($key, $value) {
         static::$languages[$key] = $value;
     }
 
+    /**
+     * 获取语言
+     * @param string $key
+     * @return mixed
+     */
     public static function get($key) {
         if (isset(static::$languages[$key])) {
             return static::$languages[$key];
@@ -42,10 +57,19 @@ class Language {
         return $key;
     }
 
+    /**
+     * @param $key
+     * @return bool
+     */
     public static function has($key) {
         return array_key_exists($key, static::$languages);
     }
 
+    /**
+     * 加载语言文件
+     * @param string $name
+     * @return bool
+     */
     public static function loadLanguage($name) {
         if (isset(static::$languages['load.records']) && array_key_exists($name, static::$languages['load.records'])) {
             return true;
@@ -63,12 +87,18 @@ class Language {
         }
     }
 
+    /**
+     * @param string $language
+     */
     public static function setLanguage($language) {       
         static::$language = $language;       
         static::$languagePath[] = realpath(ROOT_PATH . '/storage/languages/');        
         Language::loadLanguage($language);
     }
-    
+
+    /**
+     * @param string $path
+     */
     public static function addSearchPath($path) {                  
         static::$languagePath[] = realpath($path);      
     }

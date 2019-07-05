@@ -14,9 +14,7 @@
 namespace getw;
 
 /**
- * Description of arr
- *
- * @author getssl
+ * String Helper
  */
 class Str {
     
@@ -50,7 +48,11 @@ class Str {
         }
         return strtr($string, $replace_pairs);
     }
-    
+
+    /**
+     * 生成Token
+     * @return string
+     */
     public static function token() {
         return md5(str_shuffle(chr(mt_rand(32, 126)) . uniqid() . microtime(TRUE)));
     }
@@ -66,31 +68,17 @@ class Str {
     }
     
     /**
-     * FormatType
+     * 判断是否是json
      */
     public static function isJson($str) {
         json_decode($str);
         return json_last_error() === JSON_ERROR_NONE;
     }
     
-    /*
-     public static function slug($title, $separator = '-') {
-     $title = static::ascii($title);
-     // Convert all dashes/underscores into separator
-     $flip = $separator == '-' ? '_' : '-';
-     $title = preg_replace('![' . preg_quote($flip) . ']+!u', $separator, $title);
-     // Remove all characters that are not the separator, letters, numbers, or whitespace.
-     $title = preg_replace('![^' . preg_quote($separator) . '\pL\pN\s]+!u', '', mb_strtolower($title));
-     // Replace all separator characters and whitespace by a single separator
-     $title = preg_replace('![' . preg_quote($separator) . '\s]+!u', $separator, $title);
-     return trim($title, $separator);
-     }
-     */
-    
     /**
      * 判断是否是ASCII
-     * @param type $string
-     * @return type
+     * @param string $string
+     * @return bool
      */
     public static function isAscii($string) {
         return !preg_match('/[^\x00-\x7F]/S', $string);
@@ -99,11 +87,23 @@ class Str {
     public static function stripImageTags($str) {
         return preg_replace(array('#<img[\s/]+.*?src\s*=\s*["\'](.+?)["\'].*?\>#', '#<img[\s/]+.*?src\s*=\s*(.+?).*?\>#'), '\\1', $str);
     }
-    
+
+    /**
+     * starts with char
+     * @param string $needle 查找的字符
+     * @param string $haystack 字符串
+     * @return bool
+     */
     public static function startsWithChar($needle, $haystack) {
         return ($needle[0] === $haystack);
     }
-    
+
+    /**
+     * ends with char
+     * @param string $needle 查找的字符
+     * @param string $haystack 字符串
+     * @return bool
+     */
     public static function endsWithChar($needle, $haystack) {
         return (substr($needle, -1) === $haystack);
     }
@@ -112,6 +112,7 @@ class Str {
      * 随机生成
      * @param int $type 类型
      * @param int $length 长度
+     * @return mixed|int|string
      */
     public static function xrandom($type = Str::ALNUM, $length = 6) {
         switch ($type) {

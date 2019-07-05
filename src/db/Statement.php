@@ -21,16 +21,18 @@ use PDO;
  */
 class Statement extends \PDOStatement {
 
-//    public $dbh;
 
     public function __destruct() {
         parent::closeCursor();
     }
 
-//    protected function __construct($dbh) {
-//        $this->dbh = $dbh;
-//    }
-
+    /**
+     * Db bind value
+     * @param mixed $parameter
+     * @param mixed $value
+     * @param int $data_type
+     * @return bool|void
+     */
     public function bindValue($parameter, $value, $data_type = PDO::PARAM_STR) {
         if (isset($parameter[0]) && $parameter[0] != ':') {
             $parameter = ':' . $parameter;
@@ -59,18 +61,35 @@ class Statement extends \PDOStatement {
         parent::bindValue($parameter, $value, $data_type);
     }
 
+    /**
+     * DB bind values
+     * @param array $params
+     */
     public function bindValues($params) {
         foreach ($params as $parameter => $value) {
             $this->bindValue($parameter, $value);
         }
     }
 
+    /**
+     * DB bind params
+     * @param array $params
+     */
     public function bindParams($params) {
         foreach ($params as $parameter => $value) {
             $this->bindParam($parameter, $value);
         }
     }
 
+    /**
+     * Db bindParam
+     * @param mixed $parameter
+     * @param mixed $variable
+     * @param int $data_type
+     * @param null $length
+     * @param null|array $driver_options
+     * @return bool|void
+     */
     public function bindParam($parameter, &$variable, $data_type = PDO::PARAM_STR, $length = null, $driver_options = null) {
         if (isset($parameter[0]) && $parameter[0] != ':') {
             $parameter = ':' . $parameter;
@@ -96,6 +115,11 @@ class Statement extends \PDOStatement {
         parent::bindParam($parameter, $variable, $data_type, $length, $driver_options);
     }
 
+    /**
+     * Db execute
+     * @param null|array $input_parameters
+     * @return bool
+     */
     public function execute($input_parameters = null) {
         if (is_array($input_parameters)) {
             foreach ($input_parameters as $parameter => $value) {

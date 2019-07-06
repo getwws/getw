@@ -200,7 +200,7 @@ class Input {
     }
 
     /**
-     *
+     * query string from $_SERVER
      * @param string $default
      * @return array|string
      */
@@ -209,7 +209,7 @@ class Input {
     }
 
     /**
-     *
+     * HTTP isMethod
      * @param string $method
      * @return bool
      */

@@ -484,6 +484,9 @@ class Arr {
     /**
      * Filter the array using the given callback.
      *
+     * @example
+     * $result = where($data,function(data){if($data['name']=='Allen'){return true;});
+     *
      * @param  array  $array
      * @param  callable  $callback
      * @return array

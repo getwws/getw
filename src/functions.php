@@ -575,10 +575,11 @@ function array_unset_keys($keys, &$array)
 }
 
 /**
- * @param $timestamp
- * @param string $format
- * @param null $timezone
- * @param string $default
+ * 格式化日期
+ * @param time() $timestamp UNIX timestamp
+ * @param string $format 格式(Y-m-d H:i:s）
+ * @param null|string $timezone 时区
+ * @param string $default 默认日期
  * @return false|string
  */
 function format_date($timestamp, $format = '', $timezone = NULL, $default = '')
@@ -806,6 +807,7 @@ function array_where($array, callable $callback)
 
 if (!function_exists('e')) {
     /**
+     * Html special
      * @param $value
      * @return string
      */
@@ -817,7 +819,12 @@ if (!function_exists('e')) {
 }
 
 if (!function_exists('starts_with')) {
-
+    /**
+     * starts_with
+     * @param string $haystack 源字符串
+     * @param $needles 结束字符
+     * @return bool
+     */
     function starts_with($haystack, $needles)
     {
         return \getw\Str::startsWith($haystack, $needles);
@@ -825,6 +832,12 @@ if (!function_exists('starts_with')) {
 
 }
 if (!function_exists('ends_with')) {
+    /**
+     * ends_with
+     * @param string $haystack 源字符串
+     * @param string|array $needles 结束字符
+     * @return bool
+     */
     function ends_with($haystack, $needles)
     {
         return \getw\Str::endsWith($haystack, $needles);
@@ -882,6 +895,13 @@ if (!function_exists('ifOr')) {
     }
 }
 
+/**
+ * 限制字符
+ * @param string $value 源字符串
+ * @param int $limit 最大字符
+ * @param string $end 结束字符
+ * @return string
+ */
 function str_limit($value, $limit = 100, $end = '...')
 {
     return \getw\Str::limit($value, $limit, $end);

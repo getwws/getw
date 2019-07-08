@@ -19,7 +19,7 @@ namespace getw;
  */
 trait Singleton
 {
-
+    
     protected static $_instance;
 
     /**

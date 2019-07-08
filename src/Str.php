@@ -280,7 +280,7 @@ class Str {
     }
     
     /**
-     * Return the length of the given string.
+     * 返回字符长度
      *
      * @param  string  $value
      * @return int
@@ -290,11 +290,11 @@ class Str {
     }
     
     /**
-     * Limit the number of characters in a string.
+     * 限制字符最大长度
      *
-     * @param  string  $value
-     * @param  int     $limit
-     * @param  string  $end
+     * @param  string  $value 字符串
+     * @param  int     $limit 最大长度 默认100
+     * @param  string  $end 结束符...
      * @return string
      */
     public static function limit($value, $limit = 100, $end = '...') {
@@ -306,7 +306,7 @@ class Str {
     }
     
     /**
-     * Convert the given string to lower-case.
+     * 转成小写
      *
      * @param  string  $value
      * @return string
@@ -316,7 +316,7 @@ class Str {
     }
     
     /**
-     * Limit the number of words in a string.
+     * 限制字符最大词数
      *
      * @param  string  $value
      * @param  int     $words
@@ -334,7 +334,7 @@ class Str {
     }
     
     /**
-     * Parse a Class@method style callback into class and method.
+     * 解析Class@method样式的Callback
      *
      * @param  string  $callback
      * @param  string  $default
@@ -343,23 +343,13 @@ class Str {
     public static function parseCallback($callback, $default) {
         return static::contains($callback, '@') ? explode('@', $callback, 2) : [$callback, $default];
     }
-    
+
+
     /**
-     * Get the plural form of an English word.
-     *
-     * @param  string  $value
-     * @param  int     $count
+     * 随机生成字符串
+     * @param int $length 长度
      * @return string
-     */
-    public static function plural($value, $count = 2) {
-        return Pluralizer::plural($value, $count);
-    }
-    
-    /**
-     * Generate a more truly "random" alpha-numeric string.
-     *
-     * @param  int  $length
-     * @return string
+     * @throws \Exception
      */
     public static function random($length = 16) {
         if (function_exists('random_bytes')) {
@@ -377,9 +367,8 @@ class Str {
     }
     
     /**
-     * Generate a "random" alpha-numeric string.
+     * 随机生成字符串
      *
-     * Should not be considered sufficient for cryptography, etc.
      *
      * @param  int  $length
      * @return string
@@ -392,7 +381,9 @@ class Str {
     }
     
     /**
-     * Replace a given value in the string sequentially with an array.
+     * 替换数组
+     *
+     * @license laravel
      *
      * @param  string  $search
      * @param  array   $replace
@@ -409,6 +400,8 @@ class Str {
     
     /**
      * Replace the first occurrence of a given value in the string.
+     *
+     * @license laravel
      *
      * @param  string  $search
      * @param  string  $replace
@@ -444,7 +437,7 @@ class Str {
     }
     
     /**
-     * Convert the given string to upper-case.
+     * 转换成大写
      *
      * @param  string  $value
      * @return string
@@ -464,17 +457,7 @@ class Str {
     }
     
     /**
-     * Get the singular form of an English word.
-     *
-     * @param  string  $value
-     * @return string
-     */
-    public static function singular($value) {
-        return Pluralizer::singular($value);
-    }
-    
-    /**
-     * Generate a URL friendly "slug" from a given string.
+     * 生成友好的URL
      *
      * @param  string  $title
      * @param  string  $separator
@@ -498,7 +481,7 @@ class Str {
     }
     
     /**
-     * Convert a string to snake case.
+     * 字符转成SNAKE格式
      *
      * @param  string  $value
      * @param  string  $delimiter

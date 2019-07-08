@@ -150,10 +150,10 @@ class Input {
     }
 
     /**
-     * Fetch an item from the COOKIE array
+     * 从$_COOKIE中获取cookie
      *
-     * @param    string  $index    The index key
-     * @param    mixed   $default  The default value
+     * @param    string  $index    索引 (如果为空返回全部)
+     * @param    mixed   $default  默认值
      * @return   string|array
      */
     public static function cookie($index = null, $default = null) {

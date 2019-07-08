@@ -29,10 +29,24 @@ class Response {
         $this->headers = $headers;
     }
 
+    /**
+     * 创建Response
+     * @param null $content 响应内容
+     * @param int $statusCode  HTTP Code
+     * @param null $headers Headers
+     * @return Response
+     */
     public static function create($content = null, $statusCode = 200, $headers = null) {
         return new Response($content, $statusCode, $headers);
     }
 
+    /**
+     * 创建Json Response
+     * @param null|array|object $content 响应内容
+     * @param int $statusCode  HTTP Code
+     * @param null $headers Headers
+     * @return Response
+     */
     public static function toJson($content = null, $statusCode = 200, $headers = null) {
         $json = json_encode($content);
         if ($json === false) {
@@ -50,15 +64,29 @@ class Response {
         return $this;
     }
 
+    /**
+     * 设置Header
+     * @param string $header Name
+     * @param string $value  Value
+     * @return $this
+     */
     public function setHeader($header, $value) {
         $this->headers[$header] = $value;
         return $this;
     }
 
+    /**
+     * 设置响应内容
+     * @param string $content 响应内容
+     */
     public function setContent($content) {
         $this->content = $content;
     }
 
+    /**
+     * Response发送至浏览器
+     * @throws \Exception
+     */
     public function send() {
         if (\headers_sent()) {
             throw new \Exception('tried to change http response code after sending headers!');
@@ -70,6 +98,11 @@ class Response {
         echo $this->body;
     }
 
+    /**
+     * Redirect
+     * @param string $url
+     * @throws \Exception
+     */
     public function redirect($url) {
         if (\headers_sent()) {
             throw new \Exception('tried to change http response code after sending headers!');

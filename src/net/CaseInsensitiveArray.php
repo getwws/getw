@@ -20,7 +20,7 @@
 
 
  * This file is part of the getw package.
- * (w) http://www.getw.cn
+ * (w) http://www.getw.com
  * (c) Allen Niu <h@h1soft.net>
 
  * For the full copyright and license information, please view the LICENSE

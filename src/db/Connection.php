@@ -29,6 +29,13 @@ class Connection {
         
     }
 
+    /**
+     * 获取数据库连接
+     *
+     * @param null|string $connection 连接名称
+     * @return Database
+     * @throws Exception
+     */
     public static function getConenction($connection = null) {
         if (is_null($connection)) {
             $connection = Config::get('database.default');

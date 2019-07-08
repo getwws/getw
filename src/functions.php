@@ -439,10 +439,12 @@ function db_fetchCol($statement, $params = [], $connection = null)
 }
 
 /**
- * @param $statement
- * @param array $params
- * @param null $connection
+ * DB fetch All
+ * @param string $statement SQL
+ * @param array $params 参数
+ * @param null|string $connection 数据库连接名称
  * @return array
+ * @throws Exception
  */
 function db_fetchAll($statement, $params = [], $connection = null)
 {
@@ -455,6 +457,7 @@ function db_fetchAll($statement, $params = [], $connection = null)
  * @param array $params
  * @param null $connection
  * @return mixed
+ * @throws Exception
  */
 function db_fetch($statement, $params = [], $connection = null)
 {
@@ -463,10 +466,13 @@ function db_fetch($statement, $params = [], $connection = null)
 }
 
 /**
- * @param $statement
- * @param array $params
- * @param null $connection
+ * DB fetch pairs
+ *
+ * @param string $statement SQL
+ * @param array $params 参数
+ * @param null|string $connection
  * @return array
+ * @throws Exception
  */
 function db_fetchPairs($statement, $params = [], $connection = null)
 {
@@ -479,6 +485,7 @@ function db_fetchPairs($statement, $params = [], $connection = null)
  * @param array $params
  * @param null $connection
  * @return array
+ * @throws Exception
  */
 function db_fetchAssoc($statement, $params = [], $connection = null)
 {
@@ -490,6 +497,7 @@ function db_fetchAssoc($statement, $params = [], $connection = null)
  * @param $data
  * @param null $field
  * @return array
+ * @throws Exception
  */
 function db_prepare_array($data, $field = null)
 {
@@ -511,7 +519,8 @@ function db_prepare_array($data, $field = null)
  * @param $table
  * @param $data
  * @param null $connection
- * @return string
+ * @return int
+ * @throws Exception
  */
 function db_insert($table, $data, $connection = null)
 {
@@ -525,6 +534,7 @@ function db_insert($table, $data, $connection = null)
  * @param array $params
  * @param null $connection
  * @return int
+ * @throws Exception
  */
 function db_update($table, $data, $conditions = '', $params = array(), $connection = null)
 {
@@ -537,6 +547,7 @@ function db_update($table, $data, $conditions = '', $params = array(), $connecti
  * @param array $params
  * @param null $connection
  * @return int
+ * @throws Exception
  */
 function db_delete($table, $conditions = '', $params = array(), $connection = null)
 {
@@ -544,8 +555,10 @@ function db_delete($table, $conditions = '', $params = array(), $connection = nu
 }
 
 /**
- * @param $keys
- * @param $array
+ * Array 根据key数组查找
+ *
+ * @param array $keys 查找的KEYS 数组
+ * @param array $array 源数组
  * @return array
  */
 function array_find_keys($keys, &$array)
@@ -560,9 +573,11 @@ function array_find_keys($keys, &$array)
 }
 
 /**
- * @param $keys
- * @param $array
- * @return mixed
+ * Array 批量删除多个key
+ *
+ * @param array $keys KEY名字数组
+ * @param array $array 源数组
+ * @return array 删除后的数组
  */
 function array_unset_keys($keys, &$array)
 {
@@ -612,6 +627,7 @@ function format_date($timestamp, $format = '', $timezone = NULL, $default = '')
 
 if (!function_exists('http_response_code')) {
     /**
+     * HTTP Code
      * @param null $code
      * @return int|mixed|null
      */
@@ -764,8 +780,14 @@ function array_get($array, $key, $default = null)
 }
 
 /**
- * @param $array
- * @param $keys
+ * Array Has
+ * 判断key是否存在, 支持 "." 访问
+ *
+ * @example
+ * array_has($orgin,'user.home');
+ *
+ * @param  \ArrayAccess|array  $array
+ * @param  string|array  $keys
  * @return bool
  */
 function array_has($array, $keys)
@@ -774,6 +796,7 @@ function array_has($array, $keys)
 }
 
 /**
+ *
  * @param $array
  * @param callable|null $callback
  * @param null $default

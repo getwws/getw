@@ -196,10 +196,10 @@ class DB
     }
 
     /**
-     * 获取LastinsertID
-     * @param null|string $name
-     * @param null|string $connection
-     * @return int
+     * 获取Last Insert ID
+     * @param null|string $name 默认为空
+     * @param null|string $connection 连接名称
+     * @return int 最后插入的ID
      * @throws \Exception
      */
     public static function lastInsertId($name = null, $connection = null)
@@ -212,8 +212,8 @@ class DB
      *
      * @param string $statement Sql String
      * @param array $params 参数
-     * @param null|string $connection
-     * @return mixed
+     * @param null|string $connection 连接名称
+     * @return Object|null 返回行
      * @throws \Exception
      */
     public static function getRow($statement = null, $params = [], $connection = null)
@@ -222,21 +222,85 @@ class DB
     }
 
 
+    /**
+     * DB::getValue
+     *
+     * 获取一个值
+     *
+     * @param string $statement Sql String
+     * @param array $params 参数
+     * @param null $connection 连接名称
+     * @return mixed|int|string
+     * @throws \Exception
+     */
     public static function getValue($statement = null, $params = [], $connection = null)
     {
         return Connection::getConenction($connection)->getValue($statement, $params);
     }
 
+    /**
+     * DB::getCol
+     *
+     * 获取第一列的所有数据
+     *
+     * @example
+     *
+     * $names = DB::getCol("select name from users");
+     *
+     * @param string $statement Sql String
+     * @param array $params 参数
+     * @param null $connection 连接名称
+     * @return array 返回第一列的所有数据
+     * @throws \Exception
+     */
     public static function getCol($statement = null, $params = [], $connection = null)
     {
         return Connection::getConenction($connection)->getCol($statement, $params);
     }
 
+    /**
+     * DB::getAll
+     *
+     *
+     * @param string $statement Sql String
+     * @param array $params 参数
+     * @param null $connection 连接名称
+     * @return mixed
+     * @throws \Exception
+     */
     public static function getAll($statement = null, $params = [], $connection = null)
     {
-        return Connection::getConenction($connection)->getAll($statement, $params);
+        return Connection::getConenction($connection)->fetchAll($statement, $params);
     }
 
+    /**
+     * DB::fetchAll
+     *
+     *
+     * @param string $statement Sql String
+     * @param array $params 参数
+     * @param null $connection 连接名称
+     * @return mixed
+     * @throws \Exception
+     */
+    public static function fetchAll($statement = null, $params = [], $connection = null)
+    {
+        return Connection::getConenction($connection)->fetchAll($statement, $params);
+    }
+
+    /**
+     * DB::getAssoc
+     *
+     * 获取一组键值对(第一列为key，第二列为value)
+     *
+     * @param string $table 表名
+     * @param string $columns 列名
+     * @param string $conditions 条件
+     * @param array $params 参数
+     * @param null $connection 连接名称
+     * @return array
+     * @throws \Exception
+     */
     public static function getAssoc($table, $columns, $conditions = '', $params = array(), $connection = null)
     {
         return Connection::getConenction($connection)->getAssoc($table, $columns, $conditions, $params);
@@ -257,8 +321,9 @@ class DB
 
     /**
      * PDO
+     *
      * @param null|string $connection 数据库连接名称
-     * @return db\Database|mixed
+     * @return db\Database
      * @throws \Exception
      */
     public static function pdo($connection = null)

@@ -2,6 +2,7 @@
     "name": "getwws/getw",
     "description": "simple mvc",
     "license": "MIT",
+    "type": "library",
     "authors": [{
             "name": "GETW",
             "email": "support@getw.com"
@@ -9,6 +10,7 @@
     ],
     "minimum-stability": "dev",
     "require": {
+        "php": ">=5.3.2",
         "monolog/monolog": "^1.18.0",        
         "symfony/var-dumper": "2.8.x-dev",
         "filp/whoops": "~2.0",

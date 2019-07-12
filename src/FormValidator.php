@@ -43,7 +43,7 @@ namespace getw;
  * Class Validator
  *
  * @example
- * $v = new Valitron\Validator($_POST);
+ * $v = new FormValidator\Validator($_POST);
  * $v->rule('required', ['name','email','user.email']);
  * $v->rule('max', 'values.*', 100);
  * if($v->validate()) {

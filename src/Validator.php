@@ -1,135 +1,267 @@
 <?php
+// +----------------------------------------------------------------------
+// | H1CMS © OpenSource CMS
+// +----------------------------------------------------------------------
+// | Copyright (c) 2014-2016 http://www.h1cms.com All rights reserved.
+// | Copyright (c) 2014-2016 嘉兴领格信息技术有限公司，并保留所有权利。
+// +----------------------------------------------------------------------
+// | Licensed ( http://www.apache.org/licenses/LICENSE-2.0 )
+// +----------------------------------------------------------------------
+// | Author: Allen <allen@lg4.cn>   * Date: 2019/7/12 * Time: 14:44
+// +----------------------------------------------------------------------
 
 
 namespace getw;
 
-/**
- * required - Field is required
- * equals - Field must match another field (email/password confirmation)
- * different - Field must be different than another field
- * accepted - Checkbox or Radio must be accepted (yes, on, 1, true)
- * numeric - Must be numeric
- * integer - Must be integer number
- * boolean - Must be boolean
- * array - Must be array
- * length - String must be certain length
- * lengthBetween - String must be between given lengths
- * lengthMin - String must be greater than given length
- * lengthMax - String must be less than given length
- * min - Minimum
- * max - Maximum
- * in - Performs in_array check on given array values
- * notIn - Negation of in rule (not in array of values)
- * ip - Valid IP address
- * email - Valid email address
- * url - Valid URL
- * urlActive - Valid URL with active DNS record
- * alpha - Alphabetic characters only
- * alphaNum - Alphabetic and numeric characters only
- * slug - URL slug characters (a-z, 0-9, -, _)
- * regex - Field matches given regex pattern
- * date - Field is a valid date
- * dateFormat - Field is a valid date in the given format
- * dateBefore - Field is a valid date and is before the given date
- * dateAfter - Field is a valid date and is after the given date
- * contains - Field is a string and contains the given string
- * creditCard - Field is a valid credit card number
- * instanceOf - Field contains an instance of the given class
- * optional - Value does not need to be included in data array. If it is however, it must pass validation.
- **/
 
+use finfo;
+use ReflectionClass;
+use Respect\Validation\Exceptions\AllOfException;
+use Respect\Validation\Exceptions\ComponentException;
+use Respect\Validation\Exceptions\ValidationException;
+use Respect\Validation\Factory;
+use Respect\Validation\Rules\AllOf;
+use Respect\Validation\Rules\Key;
+use Respect\Validation\Validatable;
 
 /**
- * Class Validator
- *
- * @example
- * $v = new Valitron\Validator($_POST);
- * $v->rule('required', ['name','email','user.email']);
- * $v->rule('max', 'values.*', 100);
- * if($v->validate()) {
- *  echo "Yay! We're all good!";
- * } else {
-
- * print_r($v->errors());
- * }
- *
- * @package getw
- * @see https://github.com/vlucas/valitron
- * @see https://respect-validation.readthedocs.io/en/1.1/
+ * @method static \Respect\Validation\Validator age(int $minAge = null, int $maxAge = null)
+ * @method static Validator allOf(Validatable ...$rule)
+ * @method static Validator alnum(string $additionalChars = null)
+ * @method static Validator alpha(string $additionalChars = null)
+ * @method static Validator alwaysInvalid()
+ * @method static Validator alwaysValid()
+ * @method static Validator arrayVal()
+ * @method static Validator arrayType()
+ * @method static Validator attribute(string $reference, Validatable $validator = null, bool $mandatory = true)
+ * @method static Validator bank(string $countryCode)
+ * @method static Validator bankAccount(string $countryCode)
+ * @method static Validator base()
+ * @method static Validator between($min = null, $max = null, bool $inclusive = true)
+ * @method static Validator bic(string $countryCode)
+ * @method static Validator boolType()
+ * @method static Validator boolVal()
+ * @method static Validator bsn()
+ * @method static Validator call()
+ * @method static Validator callableType()
+ * @method static Validator callback(callable $callback)
+ * @method static Validator charset($charset)
+ * @method static Validator cnh()
+ * @method static Validator cnpj()
+ * @method static Validator consonant(string $additionalChars = null)
+ * @method static Validator contains($containsValue, bool $identical = false)
+ * @method static Validator countable()
+ * @method static Validator countryCode()
+ * @method static Validator currencyCode()
+ * @method static Validator cpf()
+ * @method static Validator creditCard(string $brand = null)
+ * @method static Validator date(string $format = null)
+ * @method static Validator digit(string $additionalChars = null)
+ * @method static Validator directory()
+ * @method static Validator domain(bool $tldCheck = true)
+ * @method static Validator each(Validatable $itemValidator = null, Validatable $keyValidator = null)
+ * @method static Validator email()
+ * @method static Validator endsWith($endValue, bool $identical = false)
+ * @method static Validator equals($compareTo)
+ * @method static Validator even()
+ * @method static Validator executable()
+ * @method static Validator exists()
+ * @method static Validator extension(string $extension)
+ * @method static Validator factor(int $dividend)
+ * @method static Validator falseVal()
+ * @method static Validator fibonacci()
+ * @method static Validator file()
+ * @method static Validator filterVar(int $filter, $options = null)
+ * @method static Validator finite()
+ * @method static Validator floatVal()
+ * @method static Validator floatType()
+ * @method static Validator graph(string $additionalChars = null)
+ * @method static Validator hexRgbColor()
+ * @method static Validator identical($value)
+ * @method static Validator identityCard(string $countryCode)
+ * @method static Validator image(finfo $fileInfo = null)
+ * @method static Validator imei()
+ * @method static Validator in($haystack, bool $compareIdentical = false)
+ * @method static Validator infinite()
+ * @method static Validator instance(string $instanceName)
+ * @method static Validator intVal()
+ * @method static Validator intType()
+ * @method static Validator ip($ipOptions = null)
+ * @method static Validator iterableType()
+ * @method static Validator json()
+ * @method static Validator key(string $reference, Validatable $referenceValidator = null, bool $mandatory = true)
+ * @method static Validator keyNested(string $reference, Validatable $referenceValidator = null, bool $mandatory = true)
+ * @method static Validator keySet(Key ...$rule)
+ * @method static Validator keyValue(string $comparedKey, string $ruleName, string $baseKey)
+ * @method static Validator languageCode(string $set)
+ * @method static Validator leapDate(string $format)
+ * @method static Validator leapYear()
+ * @method static Validator length(int $min = null, int $max = null, bool $inclusive = true)
+ * @method static Validator lowercase()
+ * @method static Validator macAddress()
+ * @method static Validator max($maxValue, bool $inclusive = true)
+ * @method static Validator mimetype(string $mimetype)
+ * @method static Validator min($minValue, bool $inclusive = true)
+ * @method static Validator minimumAge(int $age)
+ * @method static Validator multiple(int $multipleOf)
+ * @method static Validator negative()
+ * @method static Validator no($useLocale = false)
+ * @method static Validator noneOf(Validatable ...$rule)
+ * @method static Validator not(Validatable $rule)
+ * @method static Validator notBlank()
+ * @method static Validator notEmpty()
+ * @method static Validator notOptional()
+ * @method static Validator noWhitespace()
+ * @method static Validator nullType()
+ * @method static Validator numeric()
+ * @method static Validator objectType()
+ * @method static Validator odd()
+ * @method static Validator oneOf(Validatable ...$rule)
+ * @method static Validator optional(Validatable $rule)
+ * @method static Validator perfectSquare()
+ * @method static Validator pesel()
+ * @method static Validator phone()
+ * @method static Validator phpLabel()
+ * @method static Validator positive()
+ * @method static Validator postalCode(string $countryCode)
+ * @method static Validator primeNumber()
+ * @method static Validator prnt(string $additionalChars = null)
+ * @method static Validator punct(string $additionalChars = null)
+ * @method static Validator readable()
+ * @method static Validator regex(string $regex)
+ * @method static Validator resourceType()
+ * @method static Validator roman()
+ * @method static Validator scalarVal()
+ * @method static Validator sf(string $name, array $params = null)
+ * @method static Validator size(string $minSize = null, string $maxSize = null)
+ * @method static Validator slug()
+ * @method static Validator space(string $additionalChars = null)
+ * @method static Validator startsWith($startValue, bool $identical = false)
+ * @method static Validator stringType()
+ * @method static Validator subdivisionCode(string $countryCode)
+ * @method static Validator symbolicLink()
+ * @method static Validator tld()
+ * @method static Validator trueVal()
+ * @method static Validator type(string $type)
+ * @method static Validator uploaded()
+ * @method static Validator uppercase()
+ * @method static Validator url()
+ * @method static Validator version()
+ * @method static Validator videoUrl(string $service = null)
+ * @method static Validator vowel()
+ * @method static Validator when(Validatable $if, Validatable $then, Validatable $when = null)
+ * @method static Validator writable()
+ * @method static Validator xdigit(string $additionalChars = null)
+ * @method static Validator yes($useLocale = false)
+ * @method static Validator zend($validator, array $params = null)
  */
-class Validator extends \Valitron\Validator
+class Validator extends AllOf
 {
+    protected static $factory;
 
-    const RULE_REQUIRED = 'required';
-    const RULE_EMAIL = 'email';
-    const RULE_EQUALS = 'equals';
-    const RULE_DIFFERENT = 'different';
-    const RULE_ACCEPTED = 'accepted';
-    const RULE_NUMERIC = 'numeric';
-    const RULE_INTEGER = 'integer';
-    const RULE_BOOLEAN = 'boolean';
-    const RULE_ARRAY = 'array';
-    const RULE_LENGTH = 'length';
-    const RULE_LENGTH_BETWEEN = 'lengthBetween';
-    const RULE_LENGTH_MIN = 'lengthMin';
-    const RULE_LENGTH_MAX = 'lengthMax';
-    const RULE_MIN = 'min';
-    const RULE_MAX = 'max';
-    const RULE_IN = 'in';
-    const RULE_NOT_IN = 'notIn';
-    const RULE_IP = 'ip';
-    const RULE_URL = 'url';
-    const RULE_URL_ACTIVE = 'urlActive';
-    const RULE_ALPHA = 'alpha';
-    const RULE_ALPHA_NUM = 'alphaNum';
-    const RULE_SLUG = 'slug';
-    const RULE_REGEX = 'regex';
-    const RULE_DATE = 'date';
-    const RULE_DATE_FORMAT = 'dateFormat';
-    const RULE_DATE_BEFORE = 'dateBefore';
-    const RULE_DATE_AFTER = 'dateAfter';
-    const RULE_CONTAINS = 'contains';
-    const RULE_CREDITCARD = 'creditCard';
-    const RULE_INSTANCE_OF = 'instanceOf';
-    const RULE_OPTIONAL = 'optional';
-
-
-    public static function make($data, $fields = [], $lang = 'zh-cn')
+    /**
+     * @return Factory
+     */
+    protected static function getFactory()
     {
-        $instance = new static($data, $fields, $lang);
-        $instance->init();
-        return $instance;
+        if (!static::$factory instanceof Factory) {
+            static::$factory = new Factory();
+        }
+
+        return static::$factory;
     }
 
     /**
-     * Get array of error messages
-     *
-     * @param  null|string $field
-     * @return array|bool
+     * @param Factory $factory
      */
-    public function first($field = null)
+    public static function setFactory($factory)
     {
-        $error = $this->errors($field);
-        if (is_array($error)) {
-            return \getw\Arr::get($error, 0);
-        }
-        return $error;
-
+        static::$factory = $factory;
     }
 
-    public function hasError($field = null)
+    /**
+     * @param string $rulePrefix
+     * @param bool   $prepend
+     */
+    public static function with($rulePrefix, $prepend = false)
     {
-        if ($field !== null) {
-            return isset($this->_errors[$field]);
+        if (false === $prepend) {
+            self::getFactory()->appendRulePrefix($rulePrefix);
+        } else {
+            self::getFactory()->prependRulePrefix($rulePrefix);
+        }
+    }
+
+    public function check($input)
+    {
+        try {
+            return parent::check($input);
+        } catch (ValidationException $exception) {
+            if (count($this->getRules()) == 1 && $this->template) {
+                $exception->setTemplate($this->template);
+            }
+
+            throw $exception;
+        }
+    }
+
+    /**
+     * @param string $ruleName
+     * @param array  $arguments
+     *
+     * @return Validator
+     */
+    public static function __callStatic($ruleName, $arguments)
+    {
+        if ('allOf' === $ruleName) {
+            return static::buildRule($ruleName, $arguments);
         }
 
-        return empty($this->_errors);
+        $validator = new static();
 
+        return $validator->__call($ruleName, $arguments);
     }
 
-    protected function init(){
-
+    /**
+     * @param mixed $ruleSpec
+     * @param array $arguments
+     *
+     * @return Validatable
+     */
+    public static function buildRule($ruleSpec, $arguments = [])
+    {
+        try {
+            return static::getFactory()->rule($ruleSpec, $arguments);
+        } catch (\Exception $exception) {
+            throw new ComponentException($exception->getMessage(), $exception->getCode(), $exception);
+        }
     }
 
+    /**
+     * @param string $method
+     * @param array  $arguments
+     *
+     * @return self
+     */
+    public function __call($method, $arguments)
+    {
+        return $this->addRule(static::buildRule($method, $arguments));
+    }
 
+    protected function createException()
+    {
+        return new AllOfException();
+    }
+
+    /**
+     * Create instance validator.
+     *
+     * @return Validator
+     */
+    public static function create()
+    {
+        $ref = new ReflectionClass(__CLASS__);
+
+        return $ref->newInstanceArgs(func_get_args());
+    }
 }

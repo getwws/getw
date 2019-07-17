@@ -92,6 +92,8 @@ class FormValidator extends \Valitron\Validator
     const RULE_CREDITCARD = 'creditCard';
     const RULE_INSTANCE_OF = 'instanceOf';
     const RULE_OPTIONAL = 'optional';
+    const RULE_DB = 'db';
+    const RULE_CALLBACK = 'callback';
 
 
     public static function make($data, $fields = [], $lang = 'zh-cn')
@@ -129,6 +131,21 @@ class FormValidator extends \Valitron\Validator
 
     protected function init(){
 
+    }
+
+    protected function validateDb($field, $value, $params = array())
+    {
+        return is_numeric($value);
+    }
+
+    protected function validateCallback($field, $value, $params = array())
+    {
+        if(is_callable($params)){
+            return $params();
+        }else if($params instanceof \Closure){
+            return $params();
+        }
+        return false;
     }
 
 

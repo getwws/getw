@@ -198,7 +198,6 @@ class FormValidator
     {
         $instance = new static($data, $fields, $lang);
         $instance->init();
-        $instance->rule();
         return $instance;
     }
 

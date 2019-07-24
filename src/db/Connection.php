@@ -56,6 +56,7 @@ class Connection {
         try {
             switch ($config['driver']) {
                 case 'mysql':
+                case 'pgsql':
                     $host = \getw\Arr::get($config, 'host', 'localhost');
                     $dbname = \getw\Arr::get($config, 'database', 'localhost');
                     $username = \getw\Arr::get($config, 'username', 'root');
@@ -73,7 +74,7 @@ class Connection {
                     $dsn = "mysql:host=$host;dbname={$dbname}{$port};charset=$charset";
                     $db = new Database($dsn, $username, $password, $opt);
                     $db->setPrefix($prefix);
-                    $db->setDriver('mysql');
+                    $db->setDriver($config['driver']);
                     static::$_connections[$connection] = $db;
                     return $db;
                 default:

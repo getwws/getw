@@ -220,6 +220,9 @@ function t($message, $args = [], $options = [])
  */
 function load_language($name,$available_languages = [])
 {
+    if(empty(\getw\I18n\Language::$languagePath)){
+        \getw\I18n\Language::addSearchPath(realpath(ROOT_PATH . '/storage/languages/'));
+    }
     foreach ($available_languages as $lang){
         if(\getw\I18n\Language::loadLanguage($name.'.'.$lang)){
             return true;

@@ -218,13 +218,13 @@ function t($message, $args = [], $options = [])
  * @param array $available_languages
  * @return bool
  */
-function load_language($name,$available_languages = [])
+function load_language($name, $available_languages = [])
 {
-    if(empty(\getw\I18n\Language::$languagePath)){
+    if (empty(\getw\I18n\Language::$languagePath)) {
         \getw\I18n\Language::addSearchPath(realpath(ROOT_PATH . '/storage/languages/'));
     }
-    foreach ($available_languages as $lang){
-        if(\getw\I18n\Language::loadLanguage($name.'.'.$lang)){
+    foreach ($available_languages as $lang) {
+        if (\getw\I18n\Language::loadLanguage($name . '.' . $lang)) {
             return true;
         }
     }
@@ -260,27 +260,61 @@ function transChoice($id, $number, array $parameters = array(), $domain = null, 
 
 /**
  * 获取浏览器语言
- * @param array $available_languages
  * @param string $default
- * @return bool|string
+ * @return array|string
  */
-function get_browser_language($available_languages = [], $default = 'zh')
+function get_browser_language($default = 'zh')
 {
-
-    if ( isset( $_SERVER[ 'HTTP_ACCEPT_LANGUAGE' ] ) ) {
-        $langs = explode( ',', $_SERVER['HTTP_ACCEPT_LANGUAGE'] );
-        if ( empty( $available_languages ) ) {
-            return $langs[ 0 ];
-        }
-        foreach ( $langs as $lang ){
-            $lang = substr( $lang, 0, 2 );
-            if( in_array( $lang, $available_languages ) ) {
-                return $lang;
+    $langs = array();
+    if (isset($_SERVER['HTTP_ACCEPT_LANGUAGE'])) {
+        preg_match_all('/([a-z]{1,8}(-[a-z]{1,8})?)\s*(;\s*q\s*=\s*(1|0\.[0-9]+))?/i',
+            $_SERVER['HTTP_ACCEPT_LANGUAGE'], $lang_parse);
+        if (count($lang_parse[1])) {
+            $langs = array_combine($lang_parse[1], $lang_parse[4]);
+            foreach ($langs as $lang => $val) {
+                if ($val === '') $langs[$lang] = 1;
             }
+            arsort($langs, SORT_NUMERIC);
+        }
+    } else {
+        return [$default];
+    }
+    return array_keys($langs);
+}
+
+/**
+ * 获取浏览器语言
+ * @return int|string
+ */
+function getPreferredLanguage()
+{
+    $langs = array();
+    //COOKIE优先
+    if( isset( $_COOKIE["_language"] ) && empty($_COOKIE["_language"])) {
+        return $_COOKIE["_language"];
+    }
+    if (isset($_SERVER['HTTP_ACCEPT_LANGUAGE'])) {
+        preg_match_all('/([a-z]{1,8}(-[a-z]{1,8})?)\s*(;\s*q\s*=\s*(1|0\.[0-9]+))?/i',
+            $_SERVER['HTTP_ACCEPT_LANGUAGE'], $lang_parse);
+        if (count($lang_parse[1])) {
+            $langs = array_combine($lang_parse[1], $lang_parse[4]);
+            foreach ($langs as $lang => $val) {
+                if ($val === '') $langs[$lang] = 1;
+            }
+            arsort($langs, SORT_NUMERIC);
         }
     }
-    return $default;
+
+    foreach ($langs as $lang => $val) {
+        break;
+    }
+    if (stristr($lang, "-")) {
+        $tmp = explode("-", $lang);
+        $lang = $tmp[0];
+    }
+    return strtolower($lang);
 }
+
 
 /**
  * Response
@@ -381,8 +415,8 @@ function db($connection = null)
 
 /**
  *
- * @param  string $table
- * @param  string $connection
+ * @param string $table
+ * @param string $connection
  * @return \getw\Db\QueryBuilder
  * @throws Exception
  */
@@ -394,7 +428,7 @@ function db_table($table, $connection = null)
 /**
  * Get a schema builder instance.
  *
- * @param  string $connection
+ * @param string $connection
  * @return \getw\db\Schema
  * @throws Exception
  */
@@ -814,12 +848,12 @@ function array_get($array, $key, $default = null)
  * Array Has
  * 判断key是否存在, 支持 "." 访问
  *
+ * @param \ArrayAccess|array $array
+ * @param string|array $keys
+ * @return bool
  * @example
  * array_has($orgin,'user.home');
  *
- * @param  \ArrayAccess|array  $array
- * @param  string|array  $keys
- * @return bool
  */
 function array_has($array, $keys)
 {
@@ -904,9 +938,9 @@ if (!function_exists('preg_replace_array')) {
     /**
      * Replace a given pattern with each value in the array in sequentially.
      *
-     * @param  string $pattern
-     * @param  array $replacements
-     * @param  string $subject
+     * @param string $pattern
+     * @param array $replacements
+     * @param string $subject
      * @return string
      */
     function preg_replace_array($pattern, array $replacements, $subject)
@@ -964,13 +998,13 @@ function str_limit($value, $limit = 100, $end = '...')
 /**
  * 随机生成字符串
  *
+ * @param int $length 字符长度
+ * @return string 返回生成的字符串
  * @example
  * <code>
  * echo str_random(5);
  *</code>
  *
- * @param int $length 字符长度
- * @return string 返回生成的字符串
  */
 function str_random($length = 16)
 {

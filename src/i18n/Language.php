@@ -74,17 +74,20 @@ class Language {
         if (isset(static::$languages['load.records']) && array_key_exists($name, static::$languages['load.records'])) {
             return true;
         }
+        $found = false;
         if (is_array(static::$languagePath)) {
             foreach (static::$languagePath as $path) {
                 $file = $path . '/' . $name . '.php';
                 if (file_exists($file)) {
-                    include($file);
+                    $_LANG = include($file);
                     if (!empty($_LANG) && is_array($_LANG)) {
                         static::$languages+=$_LANG;
+                        $found = true;
                     }
                 }
             }
         }
+        return $found;
     }
 
     /**

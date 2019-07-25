@@ -214,20 +214,42 @@ function t($message, $args = [], $options = [])
 
 /**
  * 加载语言文件
- * @param $name 语言文件名
- * @return bool 成功返回true
+ * @param $name
+ * @param array $available_languages
+ * @return bool
  */
-function load_language($name)
+function load_language($name,$available_languages = [])
 {
-    return \getw\I18n\Language::loadLanguage($name);
+    foreach ($available_languages as $lang){
+        if(\getw\I18n\Language::loadLanguage($name.'.'.$lang)){
+            return true;
+        }
+    }
+    return false;
 }
 
-
+/**
+ * 使用Symfony Translator实现多语言
+ * @param string $id
+ * @param array $parameters
+ * @param string $domain
+ * @param string $locale
+ * @return string
+ */
 function trans($id, array $parameters = array(), $domain = null, $locale = null)
 {
     return \getw\Translator::instance()->trans($id, $parameters, $domain, $locale);
 }
 
+/**
+ * 使用Symfony Translator实现多语言
+ * @param $id
+ * @param $number
+ * @param array $parameters
+ * @param null $domain
+ * @param null $locale
+ * @return string
+ */
 function transChoice($id, $number, array $parameters = array(), $domain = null, $locale = null)
 {
     return \getw\Translator::instance()->transChoice($id, $number, $parameters, $domain, $locale);
@@ -236,14 +258,15 @@ function transChoice($id, $number, array $parameters = array(), $domain = null, 
 /**
  * 根据浏览器USER-AGENT 获取最佳语言
  *
- * @example $available_languages = array("en", "zh-cn", "es");
- * @example $langs = prefered_language($available_languages, $_SERVER["HTTP_ACCEPT_LANGUAGE"]);
+ * @example
+ * $available_languages = array("en", "zh-CN", "zh");
+ * $langs = prefered_language($available_languages, $_SERVER["HTTP_ACCEPT_LANGUAGE"]);
  *
  * @param array $available_languages
  * @param $http_accept_language
  * @return mixed
  */
-function prefered_language(array $available_languages, $http_accept_language)
+function prefered_language(array $available_languages, $http_accept_language , $return_langs = true)
 {
 
     $available_languages = array_flip($available_languages);
@@ -265,7 +288,9 @@ function prefered_language(array $available_languages, $http_accept_language)
         }
     }
     arsort($langs);
-
+    if($return_langs){
+        return array_keys($langs);
+    }
     return $langs;
 }
 
@@ -311,7 +336,7 @@ function redirect($url = '', $status = 302, $headers = array())
 // | XSS
 // +----------------------------------------------------------------------
 /**
- * 过滤HTML
+ * HTML过滤（安全防护）
  * @param $html HTML内容
  * @param null $config 为空使用HTMLPurifier默认规则
  * @return string 返回过滤过的HTML
@@ -354,10 +379,12 @@ function is_ssl()
     return false;
 }
 
+
 /**
  * 获取数据库连接
- * @param  string $connection Name
- * @return \getw\db\Database 返回数据库
+ * @param null|string $connection 数据库连接名称
+ * @return \getw\db\Database|mixed
+ * @throws Exception
  */
 function db($connection = null)
 {
@@ -369,6 +396,7 @@ function db($connection = null)
  * @param  string $table
  * @param  string $connection
  * @return \getw\Db\QueryBuilder
+ * @throws Exception
  */
 function db_table($table, $connection = null)
 {
@@ -380,6 +408,7 @@ function db_table($table, $connection = null)
  *
  * @param  string $connection
  * @return \getw\db\Schema
+ * @throws Exception
  */
 function db_schema($connection = null)
 {
@@ -392,6 +421,7 @@ function db_schema($connection = null)
  * @param array $params Params
  * @param null|string $connection Connection Name
  * @return \getw\db\Statement 返回 Statement
+ * @throws Exception
  */
 function db_query($statement, $params = [], $connection = null)
 {
@@ -400,9 +430,10 @@ function db_query($statement, $params = [], $connection = null)
 
 /**
  * DB exec
- * @param $statement
+ * @param string $statement
  * @param null|string $connection
  * @return int 返回影响行数
+ * @throws Exception
  */
 function db_exec($statement, $connection = null)
 {
@@ -415,6 +446,7 @@ function db_exec($statement, $connection = null)
  * @param array $driver_options
  * @param null|string $connection
  * @return \getw\db\Statement 返回Satement
+ * @throws Exception
  */
 function db_prepare($statement, $driver_options = [], $connection = null)
 {
@@ -427,12 +459,21 @@ function db_prepare($statement, $driver_options = [], $connection = null)
  * @param array $params
  * @param null|string $connection
  * @return mixed 返回一个值（string、int）
+ * @throws Exception
  */
 function db_fetchValue($statement, $params = [], $connection = null)
 {
     return \getw\DB::connection($connection)->getValue($statement, $params);
 }
 
+/***
+ * DB Fetch Cols（获取一列
+ * @param $statement
+ * @param array $params
+ * @param null $connection
+ * @return array
+ * @throws Exception
+ */
 function db_fetchCol($statement, $params = [], $connection = null)
 {
     return \getw\DB::connection($connection)->getCol($statement, $params);
@@ -453,6 +494,7 @@ function db_fetchAll($statement, $params = [], $connection = null)
 }
 
 /**
+ * 获取一行数据
  * @param $statement
  * @param array $params
  * @param null $connection
@@ -516,6 +558,7 @@ function db_prepare_array($data, $field = null)
 }
 
 /**
+ *
  * @param $table
  * @param $data
  * @param null $connection

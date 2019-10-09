@@ -68,7 +68,7 @@ class QueryBuilder {
      * @return bool
      */
     public function delete() {
-        $sql = "DELETE FROM {$this->table} " . $this->prepareWhere();
+        $sql = "DELETE FROM {{$this->table}} " . $this->prepareWhere();
         return $this->db->query($sql);
     }
 
@@ -88,7 +88,7 @@ class QueryBuilder {
                 $input_params[$name] = $value;
             }
         }
-        $sql = "UPDATE {$this->table} " . ' SET ' . implode(', ', $placeholders) . $this->prepareWhere();
+        $sql = "UPDATE {{$this->table}} " . ' SET ' . implode(', ', $placeholders) . $this->prepareWhere();
         if (($stm = $this->db->query($sql))) {
             return $stm->rowCount();
         }
@@ -454,7 +454,7 @@ class QueryBuilder {
         } else if (isset($table[0]) && $table[0] == '{') {
             return $table;
         } else if (isset($table[0]) && $table[0] != '{') {
-            return "{{$table}} as $table";
+            return "{{$table}}";
         }
     }
 

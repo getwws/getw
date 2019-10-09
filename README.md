@@ -1,6 +1,6 @@
 # GETW 1.0
 
-##require
+## Required
 ```
 "php": ">=5.3.2",
 "monolog/monolog": "^1.18.0",
@@ -11,7 +11,7 @@
 "symfony/translation": "~2.6 || ~3.0" (optional)
 ```
 
-#### generate doc
+#### Generate doc
 > vendor\bin\phpdoc run -d ../getw/src -t docs --template="abstract"
 
 

@@ -463,8 +463,10 @@ class Str {
      * @param  string  $separator
      * @return string
      */
-    public static function slug($title, $separator = '-') {
-        $title = static::ascii($title);
+    public static function slug($title, $separator = '-', $allowAscii = true) {
+        if($allowAscii){
+            $title = static::ascii($title);
+        }
         
         // Convert all dashes/underscores into separator
         $flip = $separator == '-' ? '_' : '-';

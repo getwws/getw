@@ -414,6 +414,59 @@ function db($connection = null)
 }
 
 /**
+ * 开启事务
+ * @param null|string $connection 数据库连接名称 
+ * @throws Exception
+ */
+function db_begin($connection = null){
+    \getw\DB::beginTransaction($connection);
+}
+
+/**
+ * 提交事务
+ * @param null|string $connection 数据库连接名称 
+ * @throws Exception
+ */
+function db_commit($connection = null){
+    \getw\DB::commit($connection);
+}
+
+/**
+ * 回滚事务
+ * @param null|string $connection 数据库连接名称 
+ * @throws Exception
+ */
+function db_rollback($connection = null){
+    \getw\DB::rollBack($connection);
+}
+
+/**
+ * 自动事务处理
+ * @param Closure $callback 匿名函数 
+ * @param null|string $connection 数据库连接名称 
+ * @return bool  true事务提交 false事务已回滚
+ * @throws Exception
+ */
+function db_transaction($callback , $connection = null){
+    if(is_callable($callback)){        
+        try {         
+            db_begin($connection);
+            $result = $callback($connection);            
+            if($result === false){
+                db_rollback($connection);
+                return false;
+            }  
+            db_commit($connection);
+            return true;    
+        } catch (\Exception $ex) {
+            db_rollback($connection); 
+            return false;
+        }
+    }
+    return false;
+}
+
+/**
  *
  * @param string $table
  * @param string $connection
